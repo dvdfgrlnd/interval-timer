@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <title>Interval</title>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <body>
+        <div>
+            <button id="addButton">Add</button>
+            <button id="startButton">Start</button>
+            <button id="stopButton">Stop</button>
+        </div>
+
+        <div id="container">
+        </div>
+
+        <template id="intervalTemplate">
+            <div class="intervalContainer">
+                <p class="intervalText"></p>
+                <input class="secondsInput" type="number" />
+                <button class="deleteInterval">Remove</button>
+            </div>
+        </template>
+    </body>
+
+    <link rel="stylesheet" href="index.css"/>
+    <script src="index.js"></script>
+</html>

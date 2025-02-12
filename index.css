@@ -1,0 +1,28 @@
+#container {
+    flex-flow: row wrap;
+}
+
+
+body {
+    flex-flow: row wrap;
+}
+
+
+button {
+  background-color: #1c2321;
+  border: none;
+  color: white;
+  padding: 1vh 2vh;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 1vh;
+}
+
+
+*:disabled {
+  background-color: dimgrey;
+  color: linen;
+  opacity: 1;
+}
