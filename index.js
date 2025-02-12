@@ -58,7 +58,7 @@ function startClock(repeat) {
             beep();
             startClock(repeat+1);
         }
-    }, 1000*intervals[i][1])
+    }, (1000*intervals[i][1]) + 500);
 }
 
 let startButton = document.querySelector("#startButton");
