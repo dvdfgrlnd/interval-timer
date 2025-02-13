@@ -5,8 +5,9 @@ if(cachedIntervals) {
     intervals = JSON.parse(cachedIntervals);
 }
 
+var audio = undefined;
+
 function beep() {
-    var audio = new Audio("sound.ogg");
     audio.currentTime = 0.6;
     audio.play();
 }
@@ -58,11 +59,14 @@ function startClock(repeat) {
             beep();
             startClock(repeat+1);
         }
-    }, (1000*intervals[i][1]) + 500);
+    }, 1000*intervals[i][1]);
 }
 
 let startButton = document.querySelector("#startButton");
 startButton.addEventListener("click", ()=>{
+    if (!audio) {
+        audio = new Audio("sound.ogg");
+    }
     startButton.disabled = true;
     stopButton.disabled = false;
     startClock(0)
