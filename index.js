@@ -73,6 +73,7 @@ startButton.addEventListener("click", ()=>{
     if (!audio) {
         audio = new Audio("cymbal.m4a");
     }
+    beep();
     startButton.disabled = true;
     stopButton.disabled = false;
     startClock(0)
