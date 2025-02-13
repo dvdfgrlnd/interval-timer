@@ -8,7 +8,6 @@ if(cachedIntervals) {
 var audio = undefined;
 
 function beep() {
-    audio.currentTime = 0.6;
     audio.play();
 }
 
@@ -65,7 +64,7 @@ function startClock(repeat) {
 let startButton = document.querySelector("#startButton");
 startButton.addEventListener("click", ()=>{
     if (!audio) {
-        audio = new Audio("sound.ogg");
+        audio = new Audio("cymbal.m4a");
     }
     startButton.disabled = true;
     stopButton.disabled = false;
