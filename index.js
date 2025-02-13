@@ -7,6 +7,13 @@ if(cachedIntervals) {
 
 var audio = undefined;
 
+let errorText = document.querySelector("#errorText");
+
+window.onerror = function(error, url, line) {
+    let t = errorText.innerText;
+    errorText.innerText = t +`${error}, ${url}, ${line}`;
+};
+
 function beep() {
     audio.play();
 }
