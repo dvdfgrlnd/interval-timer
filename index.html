@@ -14,12 +14,19 @@
         <div id="container">
         </div>
 
+        <h2 id="stopwatchDisplay"></h2>
+
+        <h2 id="intervalInfo"></h2>
+        <div id="visualBeep">
+
+        </div>
+
         <p id="errorText"></p>
 
         <template id="intervalTemplate">
             <div class="intervalContainer">
                 <p class="intervalText"></p>
-                <input class="secondsInput" type="number" />
+                <input class="secondsInput" type="number" min="0" />
                 <button class="deleteInterval">Remove</button>
             </div>
         </template>

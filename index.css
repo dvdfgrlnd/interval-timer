@@ -26,3 +26,18 @@ button {
   color: linen;
   opacity: 1;
 }
+
+
+#visualBeep {
+    width: 50vh;
+    height: 50vh;
+
+    background-color: black;
+}
+
+
+#visualBeep.beep {
+    width: 50vh;
+    height: 50vh;
+    background-color: cyan;
+}

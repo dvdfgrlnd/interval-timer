@@ -7,8 +7,10 @@ if(cachedIntervals) {
 
 var audio = undefined;
 var context = undefined;
+var startTime = undefined;
 
 let errorText = document.querySelector("#errorText");
+let stopwatchDisplay = document.querySelector("#stopwatchDisplay");
 
 window.onerror = function(error, url, line) {
     let t = errorText.innerText;
@@ -39,7 +41,7 @@ function renderIntervals() {
         const [_, seconds] = el;
         const template = document.querySelector("#intervalTemplate");
         const clone = template.content.cloneNode(true);
-        clone.querySelector(".intervalText").textContent = `Interval ${i+1}:`;
+        clone.querySelector(".intervalText").textContent = `Interval ${i}:`;
         let inp = clone.querySelector(".secondsInput");
         inp.value = seconds;
         inp.addEventListener("change", (event)=>{
@@ -67,14 +69,52 @@ document.querySelector("#addButton").addEventListener("click", ()=> {
     renderIntervals();
 });
 
-function startClock(repeat) {
-    let i = repeat % intervals.length;
-    setTimeout(()=>{
-        if (startButton.disabled){
+let prevElapsedTime = 0;
+let visualBeep = document.querySelector("#visualBeep");
+let intervalInfo = document.querySelector("#intervalInfo");
+
+function updateTime(time) {
+    if (!startButton.disabled){
+        return;
+    }
+    if (!startTime) {
+        startTime = time;
+        prevElapsedTime = 0;
+    }
+    let elapsedTime = time - startTime;
+
+    let totalTime = 1000 * intervals.reduce((p, c) => p+c[1], 0);
+    let t = elapsedTime % totalTime;
+
+    let prevElapsedTimeRelative = prevElapsedTime % totalTime;
+    let elapsedTimeRelative = elapsedTime % totalTime;
+    let j = 0;
+    let s = 0;
+    for(i of intervals) {
+        s += i[1];
+        let seconds = 1000 * s;
+        if(prevElapsedTimeRelative < seconds && (seconds <= elapsedTimeRelative || prevElapsedTimeRelative > elapsedTimeRelative)) {
             beep();
-            startClock(repeat+1);
+            visualBeep.classList.toggle("beep");
+            intervalInfo.textContent = `Interval #${(j+1)%intervals.length}`;
+            break;
         }
-    }, 1000*intervals[i][1]);
+        j += 1;
+    }
+
+
+    let seconds = parseInt((elapsedTime / 1000) % 60);
+    let minutes = parseInt((elapsedTime / (1000 * 60)) % 60);
+    let hours = parseInt((elapsedTime / (1000 * 60 * 60)) % 24);
+
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    hours = hours < 10 ? "0" + hours : hours;
+
+    stopwatchDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+
+    prevElapsedTime = elapsedTime;
+    animationFrameId = requestAnimationFrame(updateTime);
 }
 
 let startButton = document.querySelector("#startButton");
@@ -84,7 +124,10 @@ startButton.addEventListener("click", ()=>{
     }
     startButton.disabled = true;
     stopButton.disabled = false;
-    startClock(0)
+    
+    intervalInfo.textContent = `Interval #0`;
+    requestAnimationFrame(updateTime);
+    startTime = undefined;
 });
 
 let stopButton = document.querySelector("#stopButton");
