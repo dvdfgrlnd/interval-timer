@@ -2,9 +2,38 @@
     flex-flow: row wrap;
 }
 
+html {
+    height: 100%;
+    width: 100%;
+}
+
 
 body {
-    flex-flow: row wrap;
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#mainContainer {
+    padding: 1vw;
+    display: flex;
+    flex-flow: column wrap;
+    height: 100%;
+}
+
+.intervalContainer {
+    margin: 1vw;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 1vw;
+    border: 1vw dotted darkgray;
+    border-radius: 2vh;
+}
+
+.selectedInterval {
+    border-style: solid;
 }
 
 
@@ -29,15 +58,14 @@ button {
 
 
 #visualBeep {
-    width: 50vh;
-    height: 50vh;
+    flex-grow: 4;
+    width: 100%;
+    /* height: 20vh; */
 
     background-color: black;
 }
 
 
 #visualBeep.beep {
-    width: 50vh;
-    height: 50vh;
     background-color: cyan;
 }

@@ -1,20 +1,39 @@
+class Interval{
+    constructor(id) {
+        this.id = id;
+        this.seconds = 0;
+        this.count = 0;
+    }
+
+    changeSeconds(seconds) {
+        this.seconds = seconds;
+    }
+
+    increaseCount() {
+        this.count += 1;
+    }
+
+    resetCount() {
+        this.count = 0;
+    }
+}
 
 let cachedIntervals = localStorage.getItem("intervals");
 let intervals = [];
 if(cachedIntervals) {
-    intervals = JSON.parse(cachedIntervals);
+    intervalsTemp = JSON.parse(cachedIntervals);
+    intervals = intervalsTemp.map((x) => Object.assign(new Interval, x));
+    console.log(intervals);
 }
 
 var audio = undefined;
 var context = undefined;
 var startTime = undefined;
 
-let errorText = document.querySelector("#errorText");
 let stopwatchDisplay = document.querySelector("#stopwatchDisplay");
 
 window.onerror = function(error, url, line) {
-    let t = errorText.innerText;
-    errorText.innerText = t +`${error}, ${url}, ${line}`;
+    alert(`${error}, ${url}, ${line}`);
 };
 
 
@@ -38,21 +57,21 @@ function renderIntervals() {
     container.replaceChildren();
 
     for (const [i, el] of intervals.entries()) {
-        const [_, seconds] = el;
         const template = document.querySelector("#intervalTemplate");
         const clone = template.content.cloneNode(true);
+        clone.querySelector(".intervalContainer").id=`interval_${i}`
         clone.querySelector(".intervalText").textContent = `Interval ${i}:`;
         let inp = clone.querySelector(".secondsInput");
-        inp.value = seconds;
+        inp.value = el.seconds;
         inp.addEventListener("change", (event)=>{
             let newValue = Number(event.target.value);
-            let ind = intervals.findIndex((v) => v[0] === el[0]);
-            intervals[ind] = [el[0], newValue];
+            let ind = intervals.findIndex((v) => v.id === el.id);
+            intervals[ind].changeSeconds(newValue);
             saveIntervals();
         })
 
         clone.querySelector(".deleteInterval").addEventListener("click", () => {
-            intervals.splice(intervals.findIndex((v) => v[0] === el[0]), 1);
+            intervals.splice(intervals.findIndex((v) => v.id === el.id), 1);
             renderIntervals();
 
             saveIntervals();
@@ -65,7 +84,7 @@ function renderIntervals() {
 }
 
 document.querySelector("#addButton").addEventListener("click", ()=> {
-    intervals.push([Date.now(), 0]);
+    intervals.push(new Interval(Date.now()));
     renderIntervals();
 });
 
@@ -83,20 +102,30 @@ function updateTime(time) {
     }
     let elapsedTime = time - startTime;
 
-    let totalTime = 1000 * intervals.reduce((p, c) => p+c[1], 0);
+    let totalTime = 1000 * intervals.reduce((p, c) => p+c.seconds, 0);
     let t = elapsedTime % totalTime;
 
     let prevElapsedTimeRelative = prevElapsedTime % totalTime;
     let elapsedTimeRelative = elapsedTime % totalTime;
     let j = 0;
     let s = 0;
-    for(i of intervals) {
-        s += i[1];
+    for(interval of intervals) {
+        s += interval.seconds;
         let seconds = 1000 * s;
         if(prevElapsedTimeRelative < seconds && (seconds <= elapsedTimeRelative || prevElapsedTimeRelative > elapsedTimeRelative)) {
             beep();
             visualBeep.classList.toggle("beep");
-            intervalInfo.textContent = `Interval #${(j+1)%intervals.length}`;
+            let intervalNum = (j+1)%intervals.length;
+            let iel = intervals[intervalNum];
+            console.log(iel);
+            iel.increaseCount();
+            intervalInfo.textContent = `Interval #${intervalNum}`;
+            for(d of document.querySelectorAll(".intervalContainer")) {
+                d.classList.remove("selectedInterval");
+            }
+            let currentDoc = document.querySelector(`#interval_${intervalNum}`);
+            currentDoc.classList.toggle("selectedInterval");
+            currentDoc.querySelector(".intervalCount").textContent = `${iel.count}`;
             break;
         }
         j += 1;
@@ -125,7 +154,10 @@ startButton.addEventListener("click", ()=>{
     startButton.disabled = true;
     stopButton.disabled = false;
     
+    intervals[0].increaseCount();
     intervalInfo.textContent = `Interval #0`;
+    document.querySelector(`#interval_0`).classList.toggle("selectedInterval");
+    document.querySelector(`#interval_0 > .intervalCount`).textContent = "1";
     requestAnimationFrame(updateTime);
     startTime = undefined;
 });

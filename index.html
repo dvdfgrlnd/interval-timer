@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <body>
-        <div>
-            <button id="addButton">Add</button>
-            <button id="startButton">Start</button>
-            <button id="stopButton">Stop</button>
+        <div id="mainContainer">
+            <div>
+                <button id="addButton">Add</button>
+                <button id="startButton">Start</button>
+                <button id="stopButton">Stop</button>
+            </div>
+
+            <div id="container">
+            </div>
+
+            <h2 id="stopwatchDisplay"></h2>
+
+            <h2 id="intervalInfo"></h2>
+
+            <div id="visualBeep">
+            </div>
+
         </div>
-
-        <div id="container">
-        </div>
-
-        <h2 id="stopwatchDisplay"></h2>
-
-        <h2 id="intervalInfo"></h2>
-        <div id="visualBeep">
-
-        </div>
-
-        <p id="errorText"></p>
-
         <template id="intervalTemplate">
             <div class="intervalContainer">
                 <p class="intervalText"></p>
                 <input class="secondsInput" type="number" min="0" />
                 <button class="deleteInterval">Remove</button>
+                <p class="intervalCount"></p>
             </div>
         </template>
     </body>
