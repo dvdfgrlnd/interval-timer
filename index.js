@@ -23,7 +23,6 @@ let intervals = [];
 if(cachedIntervals) {
     intervalsTemp = JSON.parse(cachedIntervals);
     intervals = intervalsTemp.map((x) => Object.assign(new Interval, x));
-    console.log(intervals);
 }
 
 var audio = undefined;
@@ -90,7 +89,16 @@ document.querySelector("#addButton").addEventListener("click", ()=> {
 
 let prevElapsedTime = 0;
 let visualBeep = document.querySelector("#visualBeep");
-let intervalInfo = document.querySelector("#intervalInfo");
+let currentInterval = document.querySelector("#currentInterval");
+
+function flashScreen() {
+    document.querySelector("#mainContainer").style.display = 'none';
+    document.querySelector("#flashElement").style.display = 'block';
+    setTimeout(function() {
+        document.querySelector("#mainContainer").style.display = 'block';
+        document.querySelector("#flashElement").style.display = 'none';
+    }, 500);
+}
 
 function updateTime(time) {
     if (!startButton.disabled){
@@ -103,23 +111,23 @@ function updateTime(time) {
     let elapsedTime = time - startTime;
 
     let totalTime = 1000 * intervals.reduce((p, c) => p+c.seconds, 0);
-    let t = elapsedTime % totalTime;
 
     let prevElapsedTimeRelative = prevElapsedTime % totalTime;
     let elapsedTimeRelative = elapsedTime % totalTime;
     let j = 0;
     let s = 0;
+    let activeInterval = 0;
     for(interval of intervals) {
         s += interval.seconds;
         let seconds = 1000 * s;
         if(prevElapsedTimeRelative < seconds && (seconds <= elapsedTimeRelative || prevElapsedTimeRelative > elapsedTimeRelative)) {
             beep();
             visualBeep.classList.toggle("beep");
+            flashScreen();
             let intervalNum = (j+1)%intervals.length;
             let iel = intervals[intervalNum];
-            console.log(iel);
             iel.increaseCount();
-            intervalInfo.textContent = `Interval #${intervalNum}`;
+            currentInterval.textContent = `Interval #${intervalNum}`;
             for(d of document.querySelectorAll(".intervalContainer")) {
                 d.classList.remove("selectedInterval");
             }
@@ -128,8 +136,14 @@ function updateTime(time) {
             currentDoc.querySelector(".intervalCount").textContent = `${iel.count}`;
             break;
         }
+        if (elapsedTimeRelative <= seconds && !activeInterval) {
+            activeInterval = [interval, seconds];
+        }
         j += 1;
     }
+
+    let secondsLeft = Math.round((activeInterval[1] - elapsedTimeRelative) / 1000);
+    document.querySelector(`#timeLeftDisplay`).textContent = `${secondsLeft}s`;
 
 
     let seconds = parseInt((elapsedTime / 1000) % 60);
@@ -140,7 +154,7 @@ function updateTime(time) {
     minutes = minutes < 10 ? "0" + minutes : minutes;
     hours = hours < 10 ? "0" + hours : hours;
 
-    stopwatchDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+    stopwatchDisplay.textContent = `Total: ${hours}:${minutes}:${seconds}`;
 
     prevElapsedTime = elapsedTime;
     animationFrameId = requestAnimationFrame(updateTime);
@@ -155,11 +169,15 @@ startButton.addEventListener("click", ()=>{
     stopButton.disabled = false;
     
     intervals[0].increaseCount();
-    intervalInfo.textContent = `Interval #0`;
+    currentInterval.textContent = `Interval #0`;
     document.querySelector(`#interval_0`).classList.toggle("selectedInterval");
     document.querySelector(`#interval_0 > .intervalCount`).textContent = "1";
+    beep()
+    flashScreen();
+
     requestAnimationFrame(updateTime);
     startTime = undefined;
+
 });
 
 let stopButton = document.querySelector("#stopButton");

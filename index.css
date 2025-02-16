@@ -69,3 +69,24 @@ button {
 #visualBeep.beep {
     background-color: cyan;
 }
+
+#flashElement {
+    display: none;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+}
+
+#timeLeft {
+    display: flex;
+    flex-direction: row;
+}
+
+#timeLeft > p {
+    font-size: large;
+    font-family: monospace;
+
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
