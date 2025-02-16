@@ -167,6 +167,8 @@ startButton.addEventListener("click", ()=>{
     }
     startButton.disabled = true;
     stopButton.disabled = false;
+
+    intervals.forEach((i) => i.resetCount());
     
     intervals[0].increaseCount();
     currentInterval.textContent = `Interval #0`;
